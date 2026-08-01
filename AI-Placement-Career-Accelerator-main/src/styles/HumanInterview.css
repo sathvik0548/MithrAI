@@ -1,0 +1,560 @@
+/* PlacementAIApp.css — plain CSS, no Tailwind required */
+
+/* ---------- content area ---------- */
+
+.content-area {
+  flex: 1;
+  min-height: 600px;
+}
+
+.badge-wrapper {
+  padding: 24px 32px 0;
+}
+
+@media (max-width: 640px) {
+  .badge-wrapper {
+    padding: 20px 20px 0;
+  }
+}
+
+.page-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: linear-gradient(135deg, #7c5cff, #a855f7);
+}
+
+/* ---------- human interview layout ---------- */
+
+.interview-layout {
+  display: flex;
+  gap: 24px;
+  padding: 24px 32px;
+}
+
+@media (max-width: 900px) {
+  .interview-layout {
+    flex-direction: column;
+    padding: 20px;
+  }
+}
+
+.interview-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 24px;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 560px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.field-input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e6e3f5;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+  color: #111827;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: #7c5cff;
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.15);
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.field-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.select-chevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.field-row {
+  display: flex;
+  gap: 16px;
+}
+
+@media (max-width: 560px) {
+  .field-row {
+    flex-direction: column;
+  }
+}
+
+.field-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-error {
+  font-size: 14px;
+  color: #ef4444;
+  margin: 0;
+}
+
+.form-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #16a34a;
+}
+
+/* ---------- buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-self-start {
+  align-self: flex-start;
+}
+
+.btn-flex {
+  flex: 1;
+  justify-content: center;
+}
+
+.btn-small {
+  padding: 7px 14px;
+  font-size: 12px;
+  border-radius: 8px;
+}
+
+.btn-primary {
+  color: #fff;
+  background: linear-gradient(135deg, #7c5cff, #a855f7);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn-outline {
+  background: #fff;
+  border: 1px solid #e6e3f5;
+  color: #374151;
+}
+
+.btn-outline:hover {
+  background: #f5f3ff;
+}
+
+.btn-outline-danger {
+  background: #fff;
+  border: 1px solid #fecaca;
+  color: #ef4444;
+}
+
+.btn-outline-danger:hover {
+  background: #fef2f2;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.reschedule-btn {
+  color: #7c3aed;
+  border-color: #ddd6fe;
+}
+
+@media (min-width: 641px) {
+  .reschedule-btn {
+    margin-left: auto;
+  }
+}
+
+/* ---------- upcoming interviews ---------- */
+
+.upcoming-section {
+  margin-top: 40px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 16px;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.interview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.interview-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  border: 1px solid #e6e3f5;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+@media (max-width: 640px) {
+  .interview-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .reschedule-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.interview-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 180px;
+}
+
+.person-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.person-role {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.interview-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.interview-meta svg {
+  color: #9ca3af;
+}
+
+.interview-meta-meet svg {
+  color: #10b981;
+}
+
+/* ---------- avatar ---------- */
+
+.avatar {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ---------- expert dropdown ---------- */
+
+.expert-dropdown {
+  position: relative;
+}
+
+.expert-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 12px;
+  border: 1px solid #e6e3f5;
+  padding: 8px 12px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.expert-trigger-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.expert-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.expert-title {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.expert-placeholder {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.chevron-icon {
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.expert-dropdown-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  border-radius: 12px;
+  border: 1px solid #e6e3f5;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(28, 23, 52, 0.15);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.expert-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.expert-option:hover {
+  background: #f5f3ff;
+}
+
+/* ---------- about expert card ---------- */
+
+.about-expert-card {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid #e6e3f5;
+  background: #fbfaff;
+  padding: 20px;
+  height: fit-content;
+}
+
+@media (min-width: 901px) {
+  .about-expert-card {
+    width: 288px;
+    flex-shrink: 0;
+  }
+}
+
+.about-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 16px;
+}
+
+.about-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.about-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.about-role {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.about-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.about-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.about-list-item svg {
+  color: #7c5cff;
+  flex-shrink: 0;
+}
+
+.about-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f59e0b;
+}
+
+.reviews-count {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* ---------- modal ---------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 12, 33, 0.45);
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+  background: #fff;
+  padding: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+}
+
+.modal-close:hover {
+  color: #4b5563;
+}
+
+.modal-text {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 24px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-expert-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  padding: 12px;
+  background: #f7f6fd;
+}
+
+.field-group-lg {
+  margin-bottom: 8px;
+}
