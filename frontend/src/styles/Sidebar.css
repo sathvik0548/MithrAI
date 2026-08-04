@@ -92,10 +92,10 @@
 
 .logout-btn {
   margin-top: auto;
-  color: #9A8078;
-  border-top: 1px solid rgba(255,255,255,.07);
-  padding-top: 14px;
-  margin-top: 12px;
+  color: #C4A898;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+  border-radius: 8px;
 }
 .logout-btn:hover {
   background: rgba(193, 57, 43, 0.2);
