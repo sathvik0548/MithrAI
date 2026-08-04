@@ -1,92 +1,83 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700&family=Inter:wght@400;500;600;700;800&display=swap');
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+/* ── Design System Tokens ─────────────────────────────────────────────────── */
+:root {
+  --primary:        #B4563E;   /* terracotta */
+  --primary-dark:   #923F2B;   /* deep terracotta */
+  --primary-light:  #F5E6DF;   /* pale terracotta */
+  --secondary:      #E2A377;   /* warm tan */
+  --bg:             #FDF6EC;   /* cream */
+  --bg-warm:        #FAF0E3;   /* slightly deeper cream */
+  --text:           #2A1F1A;   /* warm near-black */
+  --text-muted:     #7A6558;   /* warm medium brown */
+  --border:         #E8D9CC;   /* warm light border */
+  --card:           #FFFFFF;
+  --sidebar-bg:     #2A1F1A;   /* warm dark (sidebar) */
+  --success:        #2D9E6B;
+  --warning:        #C87B2E;
+  --error:          #C1392B;
 }
 
-body{
-font-family:Inter,sans-serif;
-background:#f6f7fb;
-overflow-x:hidden;
+/* ── Global Reset ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-html{
-scroll-behavior:smooth;
+html {
+  scroll-behavior: smooth;
 }
 
-.hero-gradient{
-background:
-linear-gradient(
-135deg,
-#ffffff 0%,
-#f3f0ff 50%,
-#eef2ff 100%
-);
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-.feature-card{
-transition:all .4s ease;
+/* ── Typography — Serif headlines ─────────────────────────────────────────── */
+h1, h2, h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
 }
 
-.feature-card:hover{
-transform:translateY(-10px);
-box-shadow:
-0 20px 40px rgba(124,58,237,.15);
+/* ── Utility: spin animation (used by loading spinners) ──────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-.primary-btn{
-background:
-linear-gradient(
-90deg,
-#7c3aed,
-#6366f1
-);
-
-color:white;
-
-transition:.4s;
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
 }
 
-.primary-btn:hover{
-transform:translateY(-3px);
-
-box-shadow:
-0 12px 25px rgba(
-124,
-58,
-237,
-.35
-);
+/* ── Legacy classes (kept for pages that still reference them) ────────────── */
+.hero-gradient {
+  background: linear-gradient(135deg, #FFFBF5 0%, #FDF6EC 50%, #FAF0E3 100%);
 }
 
-.logo-shadow{
-box-shadow:
-0 10px 30px rgba(
-124,
-58,
-237,
-.2
-);
+.feature-card {
+  transition: all 0.3s ease;
 }
 
-.float{
-animation:float 4s infinite ease;
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(180, 86, 62, 0.12);
 }
 
-@keyframes float{
-
-0%{
-transform:translateY(0px)
+.primary-btn {
+  background: var(--primary);
+  color: white;
+  transition: 0.3s;
 }
 
-50%{
-transform:translateY(-15px)
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(180, 86, 62, 0.32);
 }
 
-100%{
-transform:translateY(0px)
-}
-
+.float {
+  animation: float 4s infinite ease;
 }

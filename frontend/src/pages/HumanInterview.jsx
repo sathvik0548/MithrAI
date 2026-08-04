@@ -201,7 +201,7 @@ export default function HumanInterview() {
         text: err?.response?.data?.message || "Something went wrong. Please try again.",
         icon: "error",
         background: "#fff",
-        confirmButtonColor: "#6c63ff",
+        confirmButtonColor: "#B4563E",
       });
     } finally {
       setBookingLoading(false);
@@ -220,7 +220,7 @@ export default function HumanInterview() {
         text: err?.response?.data?.message || "Please try again.",
         icon: "error",
         background: "#fff",
-        confirmButtonColor: "#6c63ff",
+        confirmButtonColor: "#B4563E",
       });
     } finally {
       setCancelLoading(false);
@@ -231,13 +231,9 @@ export default function HumanInterview() {
   const editingExpert = editingBooking ? EXPERTS.find(e => e.id === editingBooking.expertId) || { name: editingBooking.expertName, initials: "?", color:"#aaa" } : null;
 
   return (
-    <div style={{ display:"flex", minHeight:"100vh", background:"#f4f2fb", fontFamily:"Inter, ui-sans-serif, system-ui, sans-serif" }}>
+    <div style={{ display:"flex", minHeight:"100vh", background:"#FDF6EC", fontFamily:"Inter, ui-sans-serif, system-ui, sans-serif" }}>
       <Sidebar/>
       <div className="content-area">
-        <div className="badge-wrapper">
-          <span className="page-badge">HUMAN INTERVIEW</span>
-        </div>
-
         <div className="interview-layout">
           <div className="interview-main">
             <h1 className="page-title">Book a 1:1 Mock Interview</h1>

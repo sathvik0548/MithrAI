@@ -4,10 +4,10 @@ import { getRoadmapForGoal, AVAILABLE_GOALS } from "../services/localRoadmap.js"
 import CalendarReminderModal from "../components/CalendarReminderModal.jsx";
 
 const C = {
-  primary: "#6C63FF", primaryDark: "#4B44D6", primaryLight: "#EEF0FF",
-  bg: "#F4F5FF", white: "#FFFFFF", text: "#1A1D2E", muted: "#8B8FA8",
-  green: "#10B981", greenLight: "#ECFDF5", orange: "#F59E0B", orangeLight: "#FFFBEB",
-  red: "#EF4444", border: "#E8EAFF", lockedBg: "#F1F2FA",
+  primary: "#B4563E", primaryDark: "#923F2B", primaryLight: "#F5E6DF",
+  bg: "#FDF6EC", white: "#FFFFFF", text: "#2A1F1A", muted: "#7A6558",
+  green: "#2D9E6B", greenLight: "#E8F7F0", orange: "#C87B2E", orangeLight: "#FDF3E8",
+  red: "#C1392B", border: "#E8D9CC", lockedBg: "#FAF0E3",
 };
 
 const Icon = ({ d, color = "currentColor", size = 18 }) => (

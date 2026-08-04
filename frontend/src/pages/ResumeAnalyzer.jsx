@@ -3,11 +3,11 @@ import Sidebar from "../components/Sidebar";
 import { extractTextFromPDF, analyzeResume as analyzeResumeLocal } from "../services/localAnalyzer.js";
 
 const C = {
-  primary: "#6C63FF", primaryDark: "#4B44D6", primaryLight: "#EEF0FF",
-  bg: "#F4F5FF", sidebar: "#1A1D2E", sidebarHover: "#252842",
-  white: "#FFFFFF", text: "#1A1D2E", muted: "#8B8FA8",
-  green: "#10B981", orange: "#F59E0B", red: "#EF4444",
-  teal: "#06B6D4", border: "#E8EAFF",
+  primary:      "#B4563E", primaryDark: "#923F2B", primaryLight: "#F5E6DF",
+  bg:           "#FDF6EC", sidebar: "#2A1F1A", sidebarHover: "#3D2E27",
+  white:        "#FFFFFF", text: "#2A1F1A", muted: "#7A6558",
+  green:        "#2D9E6B", orange: "#C87B2E", red: "#C1392B",
+  teal:         "#2D9E9E", border: "#E8D9CC",
 };
 
 const Icon = ({ d, color = "currentColor", size = 18 }) => (
@@ -236,6 +236,12 @@ export default function ResumeAnalyzer() {
       };
 
       setResult(mapped);
+      // Persist to localStorage so Dashboard/Profile stats stay accurate
+      try {
+        const analyses = JSON.parse(localStorage.getItem("mithrai_analyses") || "[]");
+        analyses.push({ fileName: file.name, atsScore: data.atsScore, analyzedAt: new Date().toISOString() });
+        localStorage.setItem("mithrai_analyses", JSON.stringify(analyses));
+      } catch {}
       showToast("Analysis complete!", "success");
     } catch (err) {
       const msg = err?.message || "Could not read the file. Please try a different PDF.";
@@ -261,23 +267,14 @@ export default function ResumeAnalyzer() {
 
       {/* ── Main ── */}
       <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column" }}>
-        {/* breadcrumb bar */}
-        <div style={{ background:C.white, borderBottom:`1px solid ${C.border}`, padding:"0 28px" }}>
-          <div style={{ display:"inline-flex", background:C.primary,
-            borderRadius:"0 0 14px 14px", padding:"8px 20px" }}>
-            <span style={{ fontSize:12, fontWeight:800, color:"#fff",
-              letterSpacing:1, textTransform:"uppercase" }}>5. Resume Analyzer</span>
-          </div>
+        <div style={{ background:C.white, borderBottom:`1px solid ${C.border}`, padding:"18px 28px" }}>
+          <h1 style={{ margin:0, fontSize:22, fontWeight:800, color:C.text, fontFamily:"'Fraunces',Georgia,serif" }}>Resume Analyzer</h1>
+          <p style={{ margin:"4px 0 0", fontSize:13, color:C.muted, fontFamily:"'Inter',system-ui,sans-serif" }}>
+            Upload your resume and get instant ATS analysis.
+          </p>
         </div>
 
         <div style={{ padding:"28px 32px", flex:1, overflowY:"auto" }}>
-          <div style={{ marginBottom:24 }}>
-            <h1 style={{ margin:0, fontSize:22, fontWeight:800, color:C.text }}>Resume Analyzer</h1>
-            <p style={{ margin:"4px 0 0", fontSize:13, color:C.muted }}>
-              Upload your resume and get AI-powered ATS analysis.
-            </p>
-          </div>
-
           {/* ── Upload + gauge row ── */}
           <div style={{ display:"flex", gap:20, flexWrap:"wrap", marginBottom:24 }}>
 

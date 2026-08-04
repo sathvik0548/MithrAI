@@ -152,6 +152,12 @@ export default function AIMockInterview() {
       await new Promise(r => setTimeout(r, 800));
       const data = gradeInterview(questions, answers);
       setResult(data);
+      // Persist to localStorage so Dashboard/Profile stats stay accurate
+      try {
+        const sessions = JSON.parse(localStorage.getItem("mithrai_interviews") || "[]");
+        sessions.push({ role, difficulty, score: data.overallScore, completedAt: new Date().toISOString() });
+        localStorage.setItem("mithrai_interviews", JSON.stringify(sessions));
+      } catch {}
       setPhase("results");
       showToast("Interview complete! Here's your feedback.", "success");
     } catch (err) {
