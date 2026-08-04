@@ -15,14 +15,22 @@ export function AuthProvider({ children }) {
       setSession(null);
       return;
     }
+
+    // Set session immediately — never wait for backend
     setSession(supabaseSession);
     localStorage.setItem("token", supabaseSession.access_token);
-    try {
-      const { data } = await API.get("/auth/me");
-      setUser(data.user);
-    } catch {
-      setUser(null);
-    }
+
+    // Set user from Supabase session data directly (works even if backend is down)
+    setUser(supabaseSession.user);
+
+    // Optionally enrich from backend — but don't block on it
+    API.get("/auth/me")
+      .then(({ data }) => {
+        if (data?.user) setUser(prev => ({ ...prev, ...data.user }));
+      })
+      .catch(() => {
+        // Backend unavailable — Supabase session user is enough
+      });
   }, []);
 
   useEffect(() => {
@@ -33,7 +41,7 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
         await hydrateUser(session);
-        // Save Google refresh token server-side if present
+        // Save Google refresh token server-side if present (non-blocking)
         if (session?.provider_refresh_token) {
           API.post("/auth/google-token", {
             refreshToken: session.provider_refresh_token,
@@ -53,8 +61,6 @@ export function AuthProvider({ children }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        scopes: "https://www.googleapis.com/auth/calendar.events",
-        queryParams: { access_type: "offline", prompt: "consent" },
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -71,13 +77,13 @@ export function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: { data: { name, full_name: name } },
     });
     if (error) throw error;
-    // Also register on backend (creates profile, sends welcome email)
-    try {
-      await API.post("/auth/register", { name, email, password });
-    } catch {}
+
+    // Non-blocking backend call — don't await so UI doesn't hang if backend is slow/down
+    API.post("/auth/register", { name, email, password }).catch(() => {});
+
     return data;
   };
 
@@ -85,7 +91,7 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut();
   };
 
-  const updateUser = (updatedUser) => setUser(updatedUser);
+  const updateUser = (updatedUser) => setUser(prev => ({ ...prev, ...updatedUser }));
 
   return (
     <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signInWithEmail, signUp, signOut, updateUser }}>
