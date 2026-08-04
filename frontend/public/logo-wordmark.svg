@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="36" viewBox="0 0 160 36" fill="none">
+  <!-- Rounded Terracotta Badge Icon -->
+  <rect width="36" height="36" rx="10" fill="#B4563E"/>
+  <path d="M7 21C14 21 19 16 19 9" stroke="#FDF6EC" stroke-width="3" stroke-linecap="round"/>
+  <path d="M29 15C22 15 17 20 17 27" stroke="#FDF6EC" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="18" cy="18" r="2.5" fill="#E2A377"/>
+  <!-- Brand Text in Warm Serif -->
+  <text x="48" y="25" fill="#2A1F1A" font-family="'Fraunces', Georgia, serif" font-weight="700" font-size="22" letter-spacing="-0.02em">MithrAI</text>
+</svg>

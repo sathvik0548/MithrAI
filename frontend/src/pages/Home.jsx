@@ -428,7 +428,12 @@ export default function Home() {
       {/* ══ NAV ══ */}
       <nav>
         <div className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-          <div className="nav-logo-icon">M</div>
+          <svg width="34" height="34" viewBox="0 0 36 36" fill="none" style={{ flexShrink: 0 }}>
+            <rect width="36" height="36" rx="10" fill="#B4563E"/>
+            <path d="M7 21C14 21 19 16 19 9" stroke="#FDF6EC" strokeWidth="3" strokeLinecap="round"/>
+            <path d="M29 15C22 15 17 20 17 27" stroke="#FDF6EC" strokeWidth="3" strokeLinecap="round"/>
+            <circle cx="18" cy="18" r="2.5" fill="#E2A377"/>
+          </svg>
           <span className="nav-logo-text">Mithr<b>AI</b></span>
         </div>
 

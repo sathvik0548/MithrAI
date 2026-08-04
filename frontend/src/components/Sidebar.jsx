@@ -45,7 +45,12 @@ export default function Sidebar() {
         <div className="sidebar-top">
           {/* M logo mark + wordmark — matches landing nav exactly */}
           <Link to="/dashboard" className="sidebar-logo" onClick={close}>
-            <div className="sidebar-logo-mark">M</div>
+            <svg width="32" height="32" viewBox="0 0 36 36" fill="none" style={{ borderRadius: 9, flexShrink: 0 }}>
+              <rect width="36" height="36" rx="10" fill="#B4563E"/>
+              <path d="M7 21C14 21 19 16 19 9" stroke="#FDF6EC" strokeWidth="3" strokeLinecap="round"/>
+              <path d="M29 15C22 15 17 20 17 27" stroke="#FDF6EC" strokeWidth="3" strokeLinecap="round"/>
+              <circle cx="18" cy="18" r="2.5" fill="#E2A377"/>
+            </svg>
             <span className="sidebar-logo-text">MithrAI</span>
           </Link>
           <button className="sidebar-close" onClick={close} aria-label="Close navigation menu">

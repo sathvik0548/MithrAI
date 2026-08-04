@@ -112,7 +112,12 @@ export default function Register() {
           </div>
 
           <div className="rp-hero-brand">
-            <span className="rp-logo-mark">M</span>
+            <svg width="34" height="34" viewBox="0 0 36 36" fill="none" style={{ flexShrink: 0 }}>
+              <rect width="36" height="36" rx="10" fill="#B4563E"/>
+              <path d="M7 21C14 21 19 16 19 9" stroke="#FDF6EC" strokeWidth="3" strokeLinecap="round"/>
+              <path d="M29 15C22 15 17 20 17 27" stroke="#FDF6EC" strokeWidth="3" strokeLinecap="round"/>
+              <circle cx="18" cy="18" r="2.5" fill="#E2A377"/>
+            </svg>
             <span className="rp-logo-text">MithrAI</span>
           </div>
         </div>
