@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 
 import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "../styles/Sidebar.css";
 
 const NAV_ITEMS = [
@@ -23,31 +24,24 @@ const NAV_ITEMS = [
   { to: "/profile", icon: FaUser, label: "Profile" },
 ];
 
-/**
- * Single shared vertical nav bar used on every authenticated page
- * (Dashboard, Resume Analyzer, AI Mock Interview, Roadmap, Human Interview, Profile).
- * Renders identically everywhere, and collapses into a slide-in drawer on mobile.
- */
 export default function Sidebar() {
   const navigate = useNavigate();
-
-const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("currentUser");
-    navigate("/login");
-};
+  const { signOut } = useAuth();
   const [open, setOpen] = useState(false);
 
-  const logout = () => {
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch {}
     localStorage.clear();
-    navigate("/");
+    navigate("/login");
   };
 
   const closeOnMobile = () => setOpen(false);
 
   return (
     <>
-      {/* Mobile top bar: only visible below the responsive breakpoint */}
+      {/* Mobile top bar */}
       <div className="sidebar-mobile-bar">
         <button
           className="sidebar-burger"
@@ -57,16 +51,9 @@ const handleLogout = () => {
           <FaBars />
         </button>
         <span className="sidebar-mobile-logo">🎯 MithrAI</span>
-        <button className="sidebar-close-btn" onClick={toggleMobileSidebar} aria-label="Close menu">
-          ✕
-        </button>
       </div>
 
-      <div className="sidebar-header">
-        <h2 className="logo">🎯 MithrAI</h2>
-      </div>
-
-      {/* Backdrop, only rendered/shown while the mobile drawer is open */}
+      {/* Backdrop */}
       {open && <div className="sidebar-backdrop" onClick={closeOnMobile} />}
 
       <aside className={"sidebar" + (open ? " sidebar-open" : "")}>
@@ -96,7 +83,7 @@ const handleLogout = () => {
           ))}
         </nav>
 
-        <button onClick={logout} className="menu-item logout-btn">
+        <button onClick={handleLogout} className="menu-item logout-btn">
           <FaSignOutAlt /> Logout
         </button>
       </aside>
