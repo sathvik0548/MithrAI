@@ -123,6 +123,8 @@ export default function CalendarReminderModal({ isOpen, onClose, defaultTitle = 
               zIndex: 1001,
               width: "100%",
               maxWidth: 460,
+              maxHeight: "90vh",
+              overflowY: "auto",
               padding: "0 16px",
             }}
           >
