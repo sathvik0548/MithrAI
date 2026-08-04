@@ -76,33 +76,33 @@ export default function Register() {
     }
   }
 
-  const FieldError = ({ k }) => fieldErrors[k] ? <span className="field-error">{fieldErrors[k]}</span> : null;
+  const FieldError = ({ k }) => fieldErrors[k] ? <span className="fe">{fieldErrors[k]}</span> : null;
 
   return (
-    <div className="register-page">
-      {/* Left — hero panel */}
+    <div className="rp">
+      {/* Left panel — hero / value props */}
       <motion.div
-        className="reg-hero-panel"
+        className="rp-hero"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.55 }}
       >
-        <div className="reg-hero-inner">
-          <div className="reg-hero-steps">
+        <div className="rp-hero-inner">
+          <div className="rp-hero-steps">
             {[
-              { emoji: "📄", label: "Upload your resume", desc: "Get an instant ATS score and specific suggestions." },
-              { emoji: "🎤", label: "Run a mock interview", desc: "Claude asks real questions and grades your answers." },
-              { emoji: "🗺️", label: "Follow your roadmap", desc: "A phased learning plan built around your actual gaps." },
-              { emoji: "📅", label: "Book an expert", desc: "Human coaches for a final round practice session." },
+              { icon: "📄", label: "Upload your resume", desc: "Get an instant ATS score and specific keyword suggestions." },
+              { icon: "🎤", label: "Run a mock interview", desc: "Practice real questions and get detailed scoring feedback." },
+              { icon: "🗺️", label: "Follow your roadmap", desc: "A phased learning plan built around your actual skill gaps." },
+              { icon: "🤝", label: "Book an expert", desc: "1-on-1 mock interviews with industry practitioners." },
             ].map((step, i) => (
               <motion.div
                 key={i}
                 className="hero-step"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.15 + i * 0.1, duration: 0.4 }}
+                transition={{ delay: 0.12 + i * 0.08, duration: 0.4 }}
               >
-                <div className="hero-step-icon">{step.emoji}</div>
+                <div className="hero-step-icon">{step.icon}</div>
                 <div>
                   <div className="hero-step-label">{step.label}</div>
                   <div className="hero-step-desc">{step.desc}</div>
@@ -110,27 +110,27 @@ export default function Register() {
               </motion.div>
             ))}
           </div>
-          <div className="reg-hero-brand">
-            <span className="reg-hero-logo-mark">R</span>
-            <span className="reg-hero-logo-text">MithrAI</span>
+
+          <div className="rp-hero-brand">
+            <span className="rp-logo-mark">M</span>
+            <span className="rp-logo-text">MithrAI</span>
           </div>
         </div>
       </motion.div>
 
-      {/* Right — form panel */}
+      {/* Right panel — registration form */}
       <motion.div
-        className="reg-form-panel"
-        initial={{ opacity: 0, x: 32 }}
+        className="rp-form"
+        initial={{ opacity: 0, x: 28 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.45, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
       >
-        <div className="reg-form-inner">
-          <div className="reg-heading">
+        <div className="rp-form-inner">
+          <div className="rp-heading">
             <h1>Create your account</h1>
             <p>No credit card. No filler. Just the tools.</p>
           </div>
 
-          {/* Google */}
           <button
             type="button"
             className="google-btn"
@@ -142,12 +142,12 @@ export default function Register() {
             Sign up with Google
           </button>
 
-          <div className="or-divider"><span>or use email</span></div>
+          <div className="or-div"><span>or sign up with email</span></div>
 
           <AnimatePresence>
             {error && (
               <motion.div
-                className="form-error-banner"
+                className="err-banner"
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
@@ -158,32 +158,32 @@ export default function Register() {
           </AnimatePresence>
 
           <form onSubmit={handleSubmit} noValidate>
-            <div className={`form-field ${fieldErrors.name ? "has-error" : ""}`}>
+            <div className={`ff ${fieldErrors.name ? "ff-err" : ""}`}>
               <label htmlFor="reg-name">Full Name</label>
               <input id="reg-name" type="text" autoComplete="name" placeholder="Riya Mehta" value={form.name} onChange={set("name")} />
               <FieldError k="name" />
             </div>
 
-            <div className={`form-field ${fieldErrors.email ? "has-error" : ""}`}>
+            <div className={`ff ${fieldErrors.email ? "ff-err" : ""}`}>
               <label htmlFor="reg-email">Email</label>
               <input id="reg-email" type="email" autoComplete="email" placeholder="you@example.com" value={form.email} onChange={set("email")} />
               <FieldError k="email" />
             </div>
 
-            <div className={`form-field ${fieldErrors.password ? "has-error" : ""}`}>
+            <div className={`ff ${fieldErrors.password ? "ff-err" : ""}`}>
               <label htmlFor="reg-password">Password</label>
               <input id="reg-password" type="password" autoComplete="new-password" placeholder="At least 6 characters" value={form.password} onChange={set("password")} />
               <FieldError k="password" />
             </div>
 
-            <div className={`form-field ${fieldErrors.confirm ? "has-error" : ""}`}>
+            <div className={`ff ${fieldErrors.confirm ? "ff-err" : ""}`}>
               <label htmlFor="reg-confirm">Confirm Password</label>
               <input id="reg-confirm" type="password" autoComplete="new-password" placeholder="Repeat your password" value={form.confirm} onChange={set("confirm")} />
               <FieldError k="confirm" />
             </div>
 
             <button type="submit" className="submit-btn" disabled={loading || googleLoading} id="register-submit-btn">
-              {loading ? <span className="btn-spinner" /> : "Create Account"}
+              {loading ? <span className="btn-spinner" /> : "Create Account →"}
             </button>
           </form>
 
@@ -194,278 +194,127 @@ export default function Register() {
       </motion.div>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900&family=Inter:wght@400;500;600;700&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; }
 
-        .register-page {
-          display: flex;
-          min-height: 100vh;
+        .rp {
+          display: flex; min-height: 100vh;
           font-family: 'Inter', system-ui, sans-serif;
-          background: #08070f;
-          color: #e2e0ff;
+          background: #FDF6EC; color: #2A1F1A;
         }
 
-        /* Hero */
-        .reg-hero-panel {
-          flex: 1;
-          background: linear-gradient(135deg, #0d0b1e 0%, #130f2e 60%, #0d0b1e 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 48px;
-          border-right: 1px solid rgba(108,99,255,0.12);
-          position: relative;
-          overflow: hidden;
+        /* Hero Left Panel (Terracotta) */
+        .rp-hero {
+          flex: 1; background: #B4563E;
+          display: flex; align-items: center; justify-content: center;
+          padding: 48px; position: relative; overflow: hidden;
         }
-
-        .reg-hero-panel::before {
-          content: '';
-          position: absolute;
-          bottom: -80px;
-          left: -80px;
-          width: 400px;
-          height: 400px;
-          background: radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 70%);
+        .rp-hero::before {
+          content: ''; position: absolute; bottom: -80px; left: -80px;
+          width: 400px; height: 400px;
+          background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
           pointer-events: none;
         }
 
-        .reg-hero-inner {
-          max-width: 420px;
-          width: 100%;
+        .rp-hero-inner { max-width: 420px; width: 100%; position: relative; z-index: 1; }
+
+        .rp-hero-steps {
+          display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px;
         }
 
-        .reg-hero-steps {
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-          margin-bottom: 48px;
-        }
-
-        .hero-step {
-          display: flex;
-          align-items: flex-start;
-          gap: 16px;
-        }
+        .hero-step { display: flex; align-items: flex-start; gap: 14px; }
 
         .hero-step-icon {
-          width: 42px;
-          height: 42px;
-          background: rgba(108,99,255,0.12);
-          border: 1px solid rgba(108,99,255,0.25);
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 18px;
-          flex-shrink: 0;
+          width: 40px; height: 40px;
+          background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+          border-radius: 10px; display: flex; align-items: center; justify-content: center;
+          font-size: 17px; flex-shrink: 0; color: #fff;
         }
 
-        .hero-step-label {
-          font-size: 14px;
-          font-weight: 600;
-          color: #fff;
-          margin-bottom: 3px;
+        .hero-step-label { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; font-family: 'Fraunces', Georgia, serif; }
+        .hero-step-desc { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.5; font-family: 'Inter', sans-serif; }
+
+        .rp-hero-brand { display: flex; align-items: center; gap: 10px; }
+
+        .rp-logo-mark {
+          width: 34px; height: 34px; background: rgba(255,255,255,0.2); border-radius: 9px;
+          display: flex; align-items: center; justify-content: center;
+          font-weight: 900; font-size: 17px; color: #fff; font-family: 'Fraunces', Georgia, serif;
         }
 
-        .hero-step-desc {
-          font-size: 13px;
-          color: rgba(226,224,255,0.45);
-          line-height: 1.5;
+        .rp-logo-text { font-weight: 700; font-size: 17px; color: #fff; font-family: 'Inter', sans-serif; }
+
+        /* Form Right Panel (Cream) */
+        .rp-form {
+          flex: 0 0 460px; max-width: 460px; background: #FFFBF5;
+          border-left: 1px solid #E8D9CC; display: flex; align-items: center;
+          justify-content: center; padding: 48px;
         }
 
-        .reg-hero-brand {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
+        .rp-form-inner { width: 100%; max-width: 340px; }
 
-        .reg-hero-logo-mark {
-          width: 34px;
-          height: 34px;
-          background: linear-gradient(135deg, #6c63ff, #a78bfa);
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 800;
-          font-size: 16px;
-          color: #fff;
-        }
-
-        .reg-hero-logo-text {
-          font-weight: 700;
-          font-size: 18px;
-          color: rgba(226,224,255,0.7);
-        }
-
-        /* Form panel */
-        .reg-form-panel {
-          flex: 0 0 480px;
-          max-width: 480px;
-          background: #0e0c1e;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 48px;
-        }
-
-        .reg-form-inner {
-          width: 100%;
-          max-width: 360px;
-        }
-
-        .reg-heading {
-          margin-bottom: 28px;
-        }
-
-        .reg-heading h1 {
-          font-size: 24px;
-          font-weight: 700;
-          color: #fff;
-          margin-bottom: 6px;
-        }
-
-        .reg-heading p {
-          font-size: 14px;
-          color: rgba(226,224,255,0.45);
-        }
+        .rp-heading { margin-bottom: 24px; }
+        .rp-heading h1 { font-size: 26px; font-weight: 800; color: #2A1F1A; margin-bottom: 5px; }
+        .rp-heading p { font-size: 14px; color: #7A6558; font-family: 'Inter', sans-serif; }
 
         .google-btn {
-          width: 100%;
-          padding: 13px 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          background: #fff;
-          color: #1a1a2e;
-          border: none;
-          border-radius: 10px;
-          font-size: 14px;
-          font-weight: 600;
-          font-family: inherit;
-          cursor: pointer;
-          transition: all 0.2s;
-          margin-bottom: 20px;
+          width: 100%; padding: 13px 16px; display: flex; align-items: center; justify-content: center; gap: 10px;
+          background: #fff; color: #2A1F1A; border: 1.5px solid #E8D9CC;
+          border-radius: 9px; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif;
+          cursor: pointer; transition: all 0.2s; margin-bottom: 18px;
         }
-
-        .google-btn:hover:not(:disabled) {
-          background: #f3f0ff;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 16px rgba(108,99,255,0.3);
-        }
-
+        .google-btn:hover:not(:disabled) { border-color: #B4563E; box-shadow: 0 4px 14px rgba(180,86,62,0.15); transform: translateY(-1px); }
         .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .or-divider {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin: 4px 0 20px;
-          color: rgba(226,224,255,0.3);
-          font-size: 12px;
+        .or-div {
+          display: flex; align-items: center; gap: 12px; margin: 4px 0 18px;
+          color: #B8A89A; font-size: 12px; font-family: 'Inter', sans-serif;
+        }
+        .or-div::before, .or-div::after { content: ''; flex: 1; height: 1px; background: #E8D9CC; }
+
+        .err-banner {
+          background: #FDF0EE; border: 1px solid rgba(180,86,62,0.3); color: #923F2B;
+          padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; line-height: 1.4;
+          font-family: 'Inter', sans-serif;
         }
 
-        .or-divider::before, .or-divider::after {
-          content: '';
-          flex: 1;
-          height: 1px;
-          background: rgba(108,99,255,0.2);
+        .ff { margin-bottom: 14px; display: flex; flex-direction: column; gap: 5px; }
+        .ff label { font-size: 12.5px; font-weight: 600; color: #2A1F1A; font-family: 'Inter', sans-serif; }
+        .ff input {
+          width: 100%; padding: 11px 13px; background: #FDF6EC;
+          border: 1.5px solid #E8D9CC; border-radius: 9px; font-size: 14px;
+          color: #2A1F1A; font-family: 'Inter', sans-serif; outline: none;
+          transition: border .2s, background .2s;
         }
-
-        .form-error-banner {
-          background: rgba(239,68,68,0.1);
-          border: 1px solid rgba(239,68,68,0.35);
-          color: #fca5a5;
-          padding: 10px 14px;
-          border-radius: 8px;
-          font-size: 13px;
-          margin-bottom: 16px;
-          line-height: 1.4;
-        }
-
-        .form-field {
-          margin-bottom: 16px;
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-
-        .form-field label {
-          font-size: 13px;
-          font-weight: 500;
-          color: rgba(226,224,255,0.8);
-        }
-
-        .form-field input {
-          width: 100%;
-          padding: 11px 14px;
-          background: rgba(108,99,255,0.06);
-          border: 1.5px solid rgba(108,99,255,0.2);
-          border-radius: 10px;
-          font-size: 14px;
-          color: #e2e0ff;
-          font-family: inherit;
-          outline: none;
-          transition: border-color 0.2s, background 0.2s;
-        }
-
-        .form-field input::placeholder { color: rgba(226,224,255,0.25); }
-        .form-field input:focus { border-color: #6c63ff; background: rgba(108,99,255,0.1); }
-        .form-field.has-error input { border-color: rgba(239,68,68,0.5); }
-
-        .field-error { font-size: 12px; color: #fca5a5; }
+        .ff input::placeholder { color: #B8A89A; }
+        .ff input:focus { border-color: #B4563E; background: #FFFBF5; box-shadow: 0 0 0 3px rgba(180,86,62,0.1); }
+        .ff-err input { border-color: rgba(193,57,43,0.45); }
+        .fe { font-size: 12px; color: #C1392B; font-family: 'Inter', sans-serif; }
 
         .submit-btn {
-          width: 100%;
-          padding: 13px;
-          background: linear-gradient(135deg, #6c63ff, #a855f7);
-          color: #fff;
-          border: none;
-          border-radius: 10px;
-          font-size: 15px;
-          font-weight: 600;
-          font-family: inherit;
-          cursor: pointer;
-          transition: all 0.2s;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-top: 8px;
-          margin-bottom: 20px;
+          width: 100%; padding: 13px; background: #B4563E; color: #fff;
+          border: none; border-radius: 9px; font-size: 15px; font-weight: 600;
+          font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s;
+          display: flex; align-items: center; justify-content: center; margin-top: 6px; margin-bottom: 18px;
         }
-
-        .submit-btn:hover:not(:disabled) {
-          transform: translateY(-1px);
-          box-shadow: 0 6px 20px rgba(108,99,255,0.4);
-        }
-
+        .submit-btn:hover:not(:disabled) { background: #923F2B; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(180,86,62,0.3); }
         .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .btn-spinner {
-          width: 18px;
-          height: 18px;
-          border: 2px solid rgba(255,255,255,0.3);
-          border-top-color: #fff;
-          border-radius: 50%;
-          animation: spin 0.7s linear infinite;
-          display: inline-block;
+          width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.35);
+          border-top-color: #fff; border-radius: 50%;
+          animation: spin 0.7s linear infinite; display: inline-block;
         }
-
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .switch-auth {
-          font-size: 13px;
-          color: rgba(226,224,255,0.45);
-          text-align: center;
-        }
-
-        .switch-auth a { color: #a78bfa; text-decoration: none; font-weight: 500; }
-        .switch-auth a:hover { color: #c4b5fd; text-decoration: underline; }
+        .switch-auth { font-size: 13px; color: #7A6558; text-align: center; font-family: 'Inter', sans-serif; }
+        .switch-auth a { color: #B4563E; text-decoration: none; font-weight: 500; }
+        .switch-auth a:hover { text-decoration: underline; }
 
         @media (max-width: 768px) {
-          .reg-hero-panel { display: none; }
-          .reg-form-panel { flex: 1; max-width: 100%; padding: 32px 24px; }
+          .rp-hero { display: none; }
+          .rp-form { flex: 1; max-width: 100%; border-left: none; padding: 32px 24px; }
         }
       `}</style>
     </div>
