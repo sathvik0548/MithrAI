@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const style = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -26,76 +27,6 @@ const style = `
   @keyframes spin    { to{ transform:rotate(360deg) } }
   @keyframes scoreIn { from{ opacity:0;transform:scale(.5) } to{ opacity:1;transform:scale(1) } }
 
-  /* ── OVERLAY & MODAL ── */
-  .overlay {
-    position:fixed; inset:0; z-index:1000;
-    background:rgba(108,99,255,.13); backdrop-filter:blur(6px);
-    display:flex; align-items:center; justify-content:center;
-    animation:fadeIn .3s ease;
-  }
-  .modal {
-    background:#fff; border-radius:24px; padding:40px 36px;
-    width:440px; max-width:95vw;
-    box-shadow:0 24px 80px rgba(108,99,255,.18);
-    animation:slideUp .35s cubic-bezier(.34,1.56,.64,1);
-    position:relative;
-  }
-  .modal-close {
-    position:absolute; top:16px; right:18px;
-    background:none; border:none; cursor:pointer;
-    font-size:20px; color:var(--muted);
-    width:32px; height:32px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    transition:background .2s;
-  }
-  .modal-close:hover { background:var(--bg-light); }
-  .modal-logo { display:flex; align-items:center; gap:8px; margin-bottom:24px; justify-content:center; }
-  .modal-logo-dot {
-    width:32px; height:32px; border-radius:8px;
-    background:linear-gradient(135deg,var(--primary),var(--accent));
-    display:flex; align-items:center; justify-content:center;
-    color:#fff; font-weight:800; font-size:14px;
-  }
-  .modal-logo span { font-weight:800; font-size:18px; color:var(--text); }
-  .modal h2 { font-size:24px; font-weight:800; text-align:center; margin-bottom:6px; }
-  .modal > p { text-align:center; color:var(--muted); font-size:14px; margin-bottom:28px; }
-
-  .form-group { margin-bottom:16px; }
-  .form-group label { display:block; font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px; }
-  .form-group input {
-    width:100%; padding:12px 14px; border:1.5px solid var(--border);
-    border-radius:10px; font-size:14px; font-family:'Inter',sans-serif;
-    outline:none; transition:border .2s,box-shadow .2s; background:#fafafa;
-  }
-  .form-group input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(108,99,255,.12); background:#fff; }
-  .form-group input.err { border-color:var(--accent); }
-  .field-err { color:var(--accent); font-size:12px; margin-top:4px; }
-
-  .btn-primary {
-    width:100%; padding:14px;
-    background:linear-gradient(135deg,var(--primary),#8b5cf6);
-    color:#fff; border:none; border-radius:10px;
-    font-size:15px; font-weight:700; cursor:pointer;
-    transition:opacity .2s,transform .15s; margin-top:4px;
-    display:flex; align-items:center; justify-content:center; gap:8px;
-  }
-  .btn-primary:hover  { opacity:.92; transform:translateY(-1px); }
-  .btn-primary:active { transform:translateY(0); }
-  .btn-primary:disabled { opacity:.6; cursor:not-allowed; transform:none; }
-
-  .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
-
-  .modal-switch { text-align:center; margin-top:20px; font-size:13px; color:var(--muted); }
-  .modal-switch a { color:var(--primary); font-weight:600; cursor:pointer; text-decoration:none; }
-  .modal-switch a:hover { text-decoration:underline; }
-
-  .success-banner {
-    background:#ecfdf5; border:1.5px solid #6ee7b7;
-    border-radius:10px; padding:12px 14px; margin-bottom:16px;
-    color:#065f46; font-size:13px; font-weight:500;
-    display:flex; align-items:center; gap:8px;
-  }
-
   /* ── NAV ── */
   nav {
     position:sticky; top:0; z-index:200;
@@ -116,7 +47,7 @@ const style = `
   .nav-logo-text { font-weight:800; font-size:18px; color:var(--text); }
   .nav-logo-text b { color:var(--primary); }
 
-  /* Nav links – always visible */
+  /* Nav links */
   .nav-links {
     display:flex; align-items:center; gap:0; list-style:none;
     flex:1; justify-content:center;
@@ -136,7 +67,7 @@ const style = `
   .btn-ghost {
     padding:9px 20px; border:1.5px solid var(--border);
     background:none; border-radius:8px; font-size:14px; font-weight:600;
-    cursor:pointer; color:var(--text); transition:all .2s;
+    cursor:pointer; color:var(--text); transition:all .2s; text-decoration:none;
   }
   .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
   .btn-cta {
@@ -144,7 +75,7 @@ const style = `
     background:linear-gradient(135deg,var(--primary),#8b5cf6);
     color:#fff; border:none; border-radius:8px;
     font-size:14px; font-weight:700; cursor:pointer;
-    transition:opacity .2s,transform .15s;
+    transition:opacity .2s,transform .15s; text-decoration:none;
     animation:pulse 2.5s infinite;
   }
   .btn-cta:hover { opacity:.9; transform:translateY(-1px); }
@@ -172,14 +103,14 @@ const style = `
     background:linear-gradient(135deg,var(--primary),#8b5cf6);
     color:#fff; border:none; border-radius:10px;
     font-size:15px; font-weight:700; cursor:pointer;
-    transition:opacity .2s,transform .15s;
+    transition:opacity .2s,transform .15s; text-decoration:none;
   }
   .hero-btn-p:hover { opacity:.9; transform:translateY(-2px); }
   .hero-btn-s {
     padding:14px 28px; border:1.5px solid var(--border);
     background:#fff; border-radius:10px; font-size:15px;
     font-weight:600; cursor:pointer; color:var(--text);
-    display:flex; align-items:center; gap:8px;
+    display:flex; align-items:center; gap:8px; text-decoration:none;
     transition:border-color .2s,color .2s;
   }
   .hero-btn-s:hover { border-color:var(--primary); color:var(--primary); }
@@ -268,8 +199,8 @@ const style = `
   .cta-btn {
     padding:16px 36px; background:#fff; color:var(--primary);
     border:none; border-radius:10px; font-size:16px; font-weight:700;
-    cursor:pointer; transition:transform .15s,box-shadow .2s;
-    box-shadow:0 4px 16px rgba(0,0,0,.15);
+    cursor:pointer; transition:transform .15s,box-shadow .2s; text-decoration:none;
+    box-shadow:0 4px 16px rgba(0,0,0,.15); display:inline-block;
   }
   .cta-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.2); }
 
@@ -358,13 +289,11 @@ const style = `
       gap: 8px; max-height: 0; overflow: hidden; transition: max-height .25s ease;
     }
     .nav-actions.open { max-height: 220px; padding-bottom: 14px; }
-    .nav-actions .btn-ghost, .nav-actions .btn-cta { width: 100%; }
+    .nav-actions .btn-ghost, .nav-actions .btn-cta { width: 100%; text-align: center; }
 
     .features-grid { grid-template-columns:1fr; }
   }
 `;
-
-// ─── Data ────────────────────────────────────────────
 
 const FEATURES = [
   { icon:"📄", color:"#ede9ff", label:"Resume Analyzer",     desc:"Get ATS score and AI-powered suggestions to improve your resume." },
@@ -385,7 +314,6 @@ const STEPS = [
   { num:"3", title:"Get Hired",           desc:"Apply with confidence and land your dream job." },
 ];
 
-// Only these 4 in the navbar — no "Home"
 const NAV_LINKS = [
   { label:"Features",      href:"features"     },
   { label:"How It Works",  href:"how-it-works"  },
@@ -393,174 +321,28 @@ const NAV_LINKS = [
   { label:"Contact",       href:"contact"       },
 ];
 
-// ─── Helpers ─────────────────────────────────────────
-
 function scrollTo(id) {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
 }
-
-// ─── Sub-components ──────────────────────────────────
 
 function Toast({ msg, type, onClose }) {
   useEffect(() => { const t = setTimeout(onClose, 3500); return () => clearTimeout(t); }, []);
   return <div className={`toast ${type}`}><span>{type==="success"?"✅":"❌"}</span>{msg}</div>;
 }
 
-function RegisterModal({ onClose, onSwitchToLogin }) {
-  const [form, setForm]     = useState({ name:"", email:"", password:"", confirm:"" });
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [done, setDone]     = useState(false);
-
-  const validate = () => {
-    const e = {};
-    if (!form.name.trim())              e.name    = "Name is required";
-    if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Enter a valid email";
-    if (form.password.length < 6)       e.password = "At least 6 characters";
-    if (form.password !== form.confirm) e.confirm  = "Passwords don't match";
-    return e;
-  };
-
-  const submit = () => {
-    const e = validate();
-    if (Object.keys(e).length) { setErrors(e); return; }
-    setLoading(true);
-    setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem("pai_users") || "[]");
-      users.push({ name:form.name, email:form.email, password:form.password });
-      localStorage.setItem("pai_users", JSON.stringify(users));
-      setLoading(false); setDone(true);
-    }, 1400);
-  };
-
-  const upd = k => ev => { setForm(f=>({...f,[k]:ev.target.value})); setErrors(e=>({...e,[k]:undefined})); };
-
-  return (
-    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
-      <div className="modal">
-        <button className="modal-close" onClick={onClose}>✕</button>
-        <div className="modal-logo">
-          <div className="modal-logo-dot">P</div>
-          <span>Mithr<b style={{color:"var(--primary)"}}>AI</b></span>
-        </div>
-        <h2>Create your account</h2>
-        <p>Start your AI-powered career journey today</p>
-
-        {done ? (
-          <>
-            <div className="success-banner">🎉 Account created! You can now log in.</div>
-            <button className="btn-primary" onClick={onSwitchToLogin}>Go to Login →</button>
-          </>
-        ) : (
-          <>
-            {[
-              { k:"name",    label:"Full Name",        type:"text",     ph:"Rahul Sharma" },
-              { k:"email",   label:"Email",            type:"email",    ph:"you@email.com" },
-              { k:"password",label:"Password",         type:"password", ph:"Min 6 characters" },
-              { k:"confirm", label:"Confirm Password", type:"password", ph:"Repeat password" },
-            ].map(({k,label,type,ph})=>(
-              <div className="form-group" key={k}>
-                <label>{label}</label>
-                <input type={type} placeholder={ph} value={form[k]} onChange={upd(k)} className={errors[k]?"err":""} />
-                {errors[k] && <div className="field-err">{errors[k]}</div>}
-              </div>
-            ))}
-            <button className="btn-primary" onClick={submit} disabled={loading}>
-              {loading ? <><div className="spinner"/>Creating account…</> : "Create Account"}
-            </button>
-            <div className="modal-switch">Already have an account? <a onClick={onSwitchToLogin}>Log in</a></div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function LoginModal({ onClose, onSwitchToRegister, onLoginSuccess }) {
-  const [form, setForm]     = useState({ email:"", password:"" });
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  const upd = k => ev => { setForm(f=>({...f,[k]:ev.target.value})); setErrors(e=>({...e,[k]:undefined,global:undefined})); };
-
-  const submit = () => {
-    const e = {};
-    if (!form.email)    e.email    = "Email is required";
-    if (!form.password) e.password = "Password is required";
-    if (Object.keys(e).length) { setErrors(e); return; }
-    setLoading(true);
-    setTimeout(() => {
-      const users = JSON.parse(localStorage.getItem("pai_users") || "[]");
-      const user  = users.find(u => u.email===form.email && u.password===form.password);
-      setLoading(false);
-      if (user) onLoginSuccess(user);
-      else setErrors({ global:"Invalid credentials. Please register first." });
-    }, 1200);
-  };
-
-  return (
-    <div className="overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
-      <div className="modal">
-        <button className="modal-close" onClick={onClose}>✕</button>
-        <div className="modal-logo">
-          <div className="modal-logo-dot">P</div>
-          <span>Mithr<b style={{color:"var(--primary)"}}>AI</b></span>
-        </div>
-        <h2>Welcome back 👋</h2>
-        <p>Log in to continue your career journey</p>
-
-        {errors.global && (
-          <div className="success-banner" style={{background:"#fff1f2",borderColor:"#fca5a5",color:"#991b1b"}}>
-            ⚠️ {errors.global}
-          </div>
-        )}
-        {[
-          { k:"email",    label:"Email",    type:"email",    ph:"you@email.com" },
-          { k:"password", label:"Password", type:"password", ph:"Your password" },
-        ].map(({k,label,type,ph})=>(
-          <div className="form-group" key={k}>
-            <label>{label}</label>
-            <input type={type} placeholder={ph} value={form[k]} onChange={upd(k)} className={errors[k]?"err":""} />
-            {errors[k] && <div className="field-err">{errors[k]}</div>}
-          </div>
-        ))}
-        <button className="btn-primary" onClick={submit} disabled={loading}>
-          {loading ? <><div className="spinner"/>Logging in…</> : "Log In"}
-        </button>
-        <div className="modal-switch">New here? <a onClick={onSwitchToRegister}>Create an account</a></div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main App ────────────────────────────────────────
-
-export default function App() {
+export default function Home() {
   const navigate = useNavigate();
-  const [modal,   setModal]   = useState(null);
-  const [user,    setUser]    = useState(null);
-  const [toast,   setToast]   = useState(null);
-  const [active,  setActive]  = useState("");
-  const [cForm,   setCForm]   = useState({ name:"", email:"", message:"" });
-  const [cSending,setCsending]= useState(false);
+  const { user, signOut } = useAuth();
+  const [toast, setToast]   = useState(null);
+  const [active, setActive]  = useState("");
+  const [cForm, setCForm]   = useState({ name:"", email:"", message:"" });
+  const [cSending, setCsending]= useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const showToast = (msg, type="success") => setToast({ msg, type });
 
   const handleNav = id => { setActive(id); scrollTo(id); setMobileMenuOpen(false); };
-
-  const openRegister = () => setModal("register");
-  const openLogin    = () => {
-    const users = JSON.parse(localStorage.getItem("pai_users") || "[]");
-    if (!users.length) { setModal("register"); showToast("Please register first to get access.","error"); }
-    else setModal("login");
-  };
-  const openGetStarted = () => {
-    if (user) { showToast("You're already logged in! 🚀"); return; }
-    setModal("register");
-  };
-  const handleLoginSuccess = u => { setUser(u); setModal(null); showToast(`Welcome back, ${u.name}! 🎉`); navigate("/dashboard"); };
 
   const sendContact = () => {
     if (!cForm.name || !cForm.email || !cForm.message) { showToast("Please fill all fields.","error"); return; }
@@ -576,19 +358,15 @@ export default function App() {
     <>
       <style>{style}</style>
 
-      {modal==="register" && <RegisterModal onClose={()=>setModal(null)} onSwitchToLogin={()=>setModal("login")} />}
-      {modal==="login"    && <LoginModal    onClose={()=>setModal(null)} onSwitchToRegister={()=>setModal("register")} onLoginSuccess={handleLoginSuccess} />}
       {toast && <Toast {...toast} onClose={()=>setToast(null)} />}
 
       {/* ══ NAV ══ */}
       <nav>
-        {/* Logo — click scrolls to top */}
         <div className="nav-logo" onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}>
-          <div className="nav-logo-icon">P</div>
+          <div className="nav-logo-icon">M</div>
           <span className="nav-logo-text">Mithr<b>AI</b></span>
         </div>
 
-        {/* Hamburger toggle — mobile only */}
         <button
           className="nav-burger"
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
@@ -597,7 +375,6 @@ export default function App() {
           {mobileMenuOpen ? "✕" : "☰"}
         </button>
 
-        {/* 4 nav links */}
         <ul className={"nav-links" + (mobileMenuOpen ? " open" : "")}>
           {NAV_LINKS.map(l => (
             <li key={l.href}>
@@ -611,17 +388,16 @@ export default function App() {
           ))}
         </ul>
 
-        {/* Auth buttons */}
         <div className={"nav-actions" + (mobileMenuOpen ? " open" : "")}>
           {user ? (
             <>
-              <span style={{fontSize:14,fontWeight:600,color:"var(--primary)"}}>👤 {user.name}</span>
-              <button className="btn-ghost" onClick={()=>{setUser(null);showToast("Logged out successfully.");setMobileMenuOpen(false);}}>Logout</button>
+              <button className="btn-ghost" onClick={() => navigate("/dashboard")}>Dashboard</button>
+              <button className="btn-ghost" onClick={() => { signOut(); showToast("Logged out successfully."); }}>Logout</button>
             </>
           ) : (
             <>
-              <button className="btn-ghost" onClick={()=>{openLogin();setMobileMenuOpen(false);}}>Login</button>
-              <button className="btn-cta"   onClick={()=>{openRegister();setMobileMenuOpen(false);}}>Get Started</button>
+              <Link to="/login" className="btn-ghost" onClick={() => setMobileMenuOpen(false)}>Login</Link>
+              <Link to="/register" className="btn-cta" onClick={() => setMobileMenuOpen(false)}>Get Started</Link>
             </>
           )}
         </div>
@@ -634,8 +410,10 @@ export default function App() {
           <h1 className="hero-h1">Your AI-Powered<br/><span>Career Success</span><br/>Starts Here</h1>
           <p className="hero-desc">AI tools to analyze your resume, practice interviews, get a personalized roadmap and land your dream job.</p>
           <div className="hero-btns">
-            <button className="hero-btn-p" onClick={openGetStarted}>Get Started Free</button>
-            <button className="hero-btn-s" onClick={()=>showToast("🎬 Demo coming soon!")}>▶ Watch Demo</button>
+            <Link to={user ? "/dashboard" : "/register"} className="hero-btn-p">
+              {user ? "Go to Dashboard" : "Get Started Free"}
+            </Link>
+            <button className="hero-btn-s" onClick={()=>showToast("🎬 Interactive features ready in dashboard!")}>▶ Learn More</button>
           </div>
         </div>
         <div className="hero-right">
@@ -669,7 +447,7 @@ export default function App() {
         <p className="sec-sub">All-in-one platform to ace your job search</p>
         <div className="features-grid">
           {FEATURES.map(f=>(
-            <div className="feat-card" key={f.label} onClick={openGetStarted}>
+            <div className="feat-card" key={f.label} onClick={() => navigate(user ? "/dashboard" : "/register")}>
               <div className="feat-icon" style={{background:f.color}}>{f.icon}</div>
               <h3>{f.label}</h3>
               <p>{f.desc}</p>
@@ -720,7 +498,7 @@ export default function App() {
       <div className="cta-banner">
         <h2>Ready to Land Your Dream Job?</h2>
         <p>Join 10,000+ professionals who leveled up with MithrAI</p>
-        <button className="cta-btn" onClick={openGetStarted}>Start for Free — No Credit Card</button>
+        <Link to={user ? "/dashboard" : "/register"} className="cta-btn">Start for Free — No Credit Card</Link>
       </div>
 
       {/* ══ CONTACT ══ */}
@@ -743,7 +521,7 @@ export default function App() {
       {/* ══ FOOTER ══ */}
       <footer>
         <div className="footer-logo">
-          <div className="nav-logo-icon" style={{width:28,height:28,fontSize:12}}>P</div>
+          <div className="nav-logo-icon" style={{width:28,height:28,fontSize:12}}>M</div>
           <span>MithrAI</span>
         </div>
         <p>© 2025 MithrAI. All rights reserved.</p>
