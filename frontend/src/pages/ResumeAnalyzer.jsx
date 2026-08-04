@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
-import API from "../services/api.js";
+import { extractTextFromPDF, analyzeResume as analyzeResumeLocal } from "../services/localAnalyzer.js";
 
 const C = {
   primary: "#6C63FF", primaryDark: "#4B44D6", primaryLight: "#EEF0FF",
@@ -198,7 +198,7 @@ export default function ResumeAnalyzer() {
     if (f) handleFile(f);
   }, []);
 
-  // ── Core analysis (calls real Claude API via backend) ─────────────────────
+  // ── Core analysis (100% client-side — no backend needed) ────────────────────
   const analyzeResume = async () => {
     if (!file || loading) return;
     setLoading(true);
@@ -206,14 +206,16 @@ export default function ResumeAnalyzer() {
     setError(null);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      let text = "";
+      if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+        text = await extractTextFromPDF(file);
+      } else {
+        // For .doc/.docx fallback: use filename as context
+        text = file.name;
+      }
 
-      const { data } = await API.post("/resume/analyze", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const data = analyzeResumeLocal(text, file.name);
 
-      // Map backend response to the UI shape used by existing components
       const mapped = {
         ats_score: data.atsScore ?? 0,
         score_breakdown: {
@@ -226,9 +228,9 @@ export default function ResumeAnalyzer() {
         good_points:      data.strengths ?? [],
         improvements:     data.improvements ?? [],
         missing:          data.missingKeywords ?? [],
-        candidate_name:   data.fileName?.replace(/\.pdf$/i, "") ?? "",
+        candidate_name:   data.fileName ?? "",
         target_role:      data.targetRole ?? "",
-        keywords_found:   [],
+        keywords_found:   data.keywordsFound ?? [],
         keywords_missing: data.missingKeywords ?? [],
         summary:          data.summary ?? "",
       };
@@ -236,7 +238,7 @@ export default function ResumeAnalyzer() {
       setResult(mapped);
       showToast("Analysis complete!", "success");
     } catch (err) {
-      const msg = err?.response?.data?.message || err.message || "Analysis failed. Please try again.";
+      const msg = err?.message || "Could not read the file. Please try a different PDF.";
       setError(msg);
       showToast(msg, "error");
     }

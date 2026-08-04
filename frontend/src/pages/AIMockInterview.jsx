@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { Mic, Square, ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, X, RotateCcw } from "lucide-react";
-import API from "../services/api.js";
+import { getQuestionsForRole, gradeInterview, AVAILABLE_ROLES } from "../services/localInterview.js";
 import CalendarReminderModal from "../components/CalendarReminderModal.jsx";
 import Swal from "sweetalert2";
 
-const ROLES = ["Java Developer","Frontend Developer","Data Analyst","Backend Developer","Full Stack Developer","DevOps Engineer","Machine Learning Engineer","Product Manager"];
+const ROLES = AVAILABLE_ROLES;
 const DIFFICULTIES = ["Easy","Medium","Hard"];
 const MAX_CHARS = 3000;
 
@@ -101,37 +101,36 @@ export default function AIMockInterview() {
 
   const showToast = (message, type="success") => setToast({ message, type });
 
-  // ── Start session via Claude ──────────────────────────────────────────────
+  // ── Start session using local question bank ──────────────────────────────────
   async function handleStartInterview() {
     setPhase("loading");
     try {
-      const { data } = await API.post("/interview/start", { role, difficulty, count });
-      setSessionId(data.sessionId || data._id);
-      setQuestions(data.questions || []);
-      setAnswers(Array(data.questions.length).fill(""));
+      const questions = getQuestionsForRole(role, difficulty, count);
+      const sessionId = `local-${Date.now()}`;
+      setSessionId(sessionId);
+      setQuestions(questions);
+      setAnswers(Array(questions.length).fill(""));
       setPerFeedback({});
       setCurrentIndex(0);
       setResult(null);
+      // Small delay so loading screen shows
+      await new Promise(r => setTimeout(r, 600));
       setPhase("interview");
     } catch (err) {
-      showToast(err?.response?.data?.message || "Failed to start interview. Check your connection.", "error");
+      showToast("Failed to start interview. Please try again.", "error");
       setPhase("setup");
     }
   }
 
-  // ── Submit one answer (get per-question feedback) ─────────────────────────
+  // ── Submit one answer (per-question local feedback) ────────────────────────────
   async function submitCurrentAnswer() {
     if (!sessionId) return;
     const answer = answers[currentIndex] || "";
-    try {
-      const { data } = await API.post(`/interview/${sessionId}/answer`, {
-        questionIndex: currentIndex,
-        answer,
-      });
-      setPerFeedback((prev) => ({ ...prev, [currentIndex]: data }));
-    } catch {
-      // Non-fatal: continue without per-question feedback
-    }
+    const len = answer.trim().length;
+    // Quick local score
+    const score = len > 300 ? 8 : len > 150 ? 7 : len > 80 ? 5 : len > 20 ? 3 : 1;
+    const feedbackMap = { 8: "Great answer!", 7: "Good answer, add more detail.", 5: "Decent — expand your reasoning.", 3: "Too brief. Provide specifics.", 1: "Needs development." };
+    setPerFeedback(prev => ({ ...prev, [currentIndex]: { score, feedback: feedbackMap[score] || feedbackMap[5] } }));
   }
 
   // ── Navigate between questions ────────────────────────────────────────────
@@ -143,18 +142,20 @@ export default function AIMockInterview() {
     setTimeout(() => { setCurrentIndex(idx); setQuestionAnim("in"); }, 180);
   }
 
-  // ── Finish interview ──────────────────────────────────────────────────────
+  // ── Finish interview using local grader ──────────────────────────────────────
   async function handleFinish() {
     stopRecording();
     await submitCurrentAnswer();
     setPhase("grading");
     try {
-      const { data } = await API.post(`/interview/${sessionId}/finish`);
+      // Small delay for UX
+      await new Promise(r => setTimeout(r, 800));
+      const data = gradeInterview(questions, answers);
       setResult(data);
       setPhase("results");
       showToast("Interview complete! Here's your feedback.", "success");
     } catch (err) {
-      showToast(err?.response?.data?.message || "Failed to grade interview. Please try again.", "error");
+      showToast("Failed to grade interview. Please try again.", "error");
       setPhase("interview");
     }
   }

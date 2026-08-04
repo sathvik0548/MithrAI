@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
-import API from "../services/api.js";
+import { getRoadmapForGoal, AVAILABLE_GOALS } from "../services/localRoadmap.js";
 import CalendarReminderModal from "../components/CalendarReminderModal.jsx";
 
 const C = {
@@ -27,11 +27,7 @@ const ICONS = {
   zap:      "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
 };
 
-const GOALS = [
-  "Full Stack Developer", "Frontend Developer", "Backend Developer",
-  "Data Analyst", "Data Scientist", "DevOps Engineer",
-  "Machine Learning Engineer", "Mobile Developer", "Product Manager",
-];
+const GOALS = AVAILABLE_GOALS;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function computeProgress(topics) {
@@ -192,17 +188,17 @@ export default function RoadmapGenerator() {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [savingTopic, setSavingTopic] = useState(false);
 
-  // Load existing roadmaps from backend
-  const loadRoadmaps = useCallback(async () => {
+  // Load existing roadmaps from localStorage (fully offline)
+  const loadRoadmaps = useCallback(() => {
     setLoadingRoadmaps(true);
     try {
-      const { data } = await API.get("/roadmap");
-      setRoadmaps(data || []);
-      if (data?.length > 0 && !activeRoadmapId) {
-        setActiveRoadmapId(data[0].id || data[0]._id);
+      const stored = JSON.parse(localStorage.getItem("mithrai_roadmaps") || "[]");
+      setRoadmaps(stored);
+      if (stored.length > 0 && !activeRoadmapId) {
+        setActiveRoadmapId(stored[0].id || stored[0]._id);
       }
     } catch {
-      // If unauthorized or error, show empty state with generate button
+      setRoadmaps([]);
     } finally {
       setLoadingRoadmaps(false);
     }
@@ -228,58 +224,49 @@ export default function RoadmapGenerator() {
     return Math.round((all.filter(t => t.done).length / all.length) * 100);
   }, [phases]);
 
-  // Generate a new roadmap via Claude
-  async function handleGenerate(goal) {
+  // Generate a new roadmap using local pre-built data
+  function handleGenerate(goal) {
     setGenerating(true);
     try {
-      const { data } = await API.post("/roadmap/generate", { goal });
+      const data = getRoadmapForGoal(goal);
       setRoadmaps(prev => {
         const existing = prev.findIndex(r => r.goal === goal);
+        let updated;
         if (existing >= 0) {
-          const copy = [...prev];
-          copy[existing] = data;
-          return copy;
+          updated = [...prev];
+          updated[existing] = data;
+        } else {
+          updated = [data, ...prev];
         }
-        return [data, ...prev];
+        localStorage.setItem("mithrai_roadmaps", JSON.stringify(updated));
+        return updated;
       });
       setActiveRoadmapId(data.id || data._id);
       setSelectedPhaseIndex(0);
       setShowModal(false);
     } catch (err) {
-      // Show inline error — keep modal open
-      alert(err?.response?.data?.message || "Failed to generate roadmap. Please try again.");
+      alert("Failed to generate roadmap. Please try again.");
     } finally {
       setGenerating(false);
     }
   }
 
-  // Toggle a topic done/undone and persist to backend
-  async function handleTopicToggle(phaseIndex, topicIndex, done) {
-    if (!activeRoadmapId || savingTopic) return;
-    // Optimistic update
-    setRoadmaps(prev => prev.map(r => {
-      if ((r.id || r._id) !== activeRoadmapId) return r;
-      const phases = (r.phases || []).map((p, pi) => {
-        if (pi !== phaseIndex) return p;
-        const topics = (p.topics || []).map((t, ti) => ti === topicIndex ? { ...t, done } : t);
-        return { ...p, topics };
+  // Toggle a topic done/undone and persist to localStorage
+  function handleTopicToggle(phaseIndex, topicIndex, done) {
+    if (!activeRoadmapId) return;
+    setRoadmaps(prev => {
+      const updated = prev.map(r => {
+        if ((r.id || r._id) !== activeRoadmapId) return r;
+        const phases = (r.phases || []).map((p, pi) => {
+          if (pi !== phaseIndex) return p;
+          const topics = (p.topics || []).map((t, ti) => ti === topicIndex ? { ...t, done } : t);
+          return { ...p, topics };
+        });
+        return { ...r, phases };
       });
-      return { ...r, phases };
-    }));
-    setSavingTopic(true);
-    try {
-      const { data: updated } = await API.patch(`/roadmap/${activeRoadmapId}/topic`, {
-        phaseIndex, topicIndex, done,
-      });
-      setRoadmaps(prev => prev.map(r =>
-        (r.id || r._id) === activeRoadmapId ? updated : r
-      ));
-    } catch {
-      // Revert on failure
-      loadRoadmaps();
-    } finally {
-      setSavingTopic(false);
-    }
+      localStorage.setItem("mithrai_roadmaps", JSON.stringify(updated));
+      return updated;
+    });
   }
 
   const encouragement =
