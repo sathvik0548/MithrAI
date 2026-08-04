@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
   <rect width="36" height="36" rx="10" fill="#B4563E"/>
-  <!-- Two cream curved strokes meeting near center -->
-  <path d="M7 21C14 21 19 16 19 9" stroke="#FDF6EC" stroke-width="3" stroke-linecap="round"/>
-  <path d="M29 15C22 15 17 20 17 27" stroke="#FDF6EC" stroke-width="3" stroke-linecap="round"/>
-  <!-- Tan accent dot -->
-  <circle cx="18" cy="18" r="2.5" fill="#E2A377"/>
+  <!-- Geometric meeting curves forming abstract M -->
+  <path d="M 10 10 V 22.5 C 10 26.5 14.5 27 18 18 C 14.5 9 10 10 10 10 Z" stroke="#FDF6EC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M 26 10 V 22.5 C 26 26.5 21.5 27 18 18 C 21.5 9 26 10 26 10 Z" stroke="#FDF6EC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Central tan accent dot -->
+  <circle cx="18" cy="18" r="2" fill="#E2A377"/>
 </svg>
