@@ -5,11 +5,7 @@ import Swal from "sweetalert2";
 
 /**
  * CalendarReminderModal
- * Props:
- *   isOpen: boolean
- *   onClose: () => void
- *   defaultTitle: string
- *   defaultDescription: string
+ * Supports creating events directly via Google Calendar API OR via one-click Google Calendar web link fallback!
  */
 export default function CalendarReminderModal({ isOpen, onClose, defaultTitle = "", defaultDescription = "" }) {
   const [title, setTitle] = useState(defaultTitle);
@@ -26,54 +22,69 @@ export default function CalendarReminderModal({ isOpen, onClose, defaultTitle = 
     { label: "1 day before", value: 1440 },
   ];
 
+  // Creates a Google Calendar web link (works for 100% of users instantly!)
+  function openGoogleCalendarWebLink(eventTitle, eventDesc, startIso) {
+    const startDate = new Date(startIso);
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour event
+
+    const formatGCalDate = (d) => d.toISOString().replace(/-|:|\.\d\d\d/g, "");
+
+    const url = new URL("https://calendar.google.com/calendar/render");
+    url.searchParams.set("action", "TEMPLATE");
+    url.searchParams.set("text", eventTitle);
+    url.searchParams.set("details", eventDesc);
+    url.searchParams.set("dates", `${formatGCalDate(startDate)}/${formatGCalDate(endDate)}`);
+
+    window.open(url.toString(), "_blank");
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!title.trim() || !dateTime) {
-      Swal.fire({ title: "Missing fields", text: "Please fill in the event title and date/time.", icon: "warning", background: "#0e0c1e", color: "#e2e0ff", confirmButtonColor: "#6c63ff" });
+      Swal.fire({
+        title: "Missing fields",
+        text: "Please fill in the event title and date/time.",
+        icon: "warning",
+        background: "#0e0c1e",
+        color: "#e2e0ff",
+        confirmButtonColor: "#6c63ff"
+      });
       return;
     }
 
+    const isoDate = new Date(dateTime).toISOString();
+
     setLoading(true);
     try {
+      // Try backend direct Google Calendar API integration
       await API.post("/calendar/reminder", {
         title: title.trim(),
         description: description.trim(),
-        dateTimeISO: new Date(dateTime).toISOString(),
+        dateTimeISO: isoDate,
         minutesBefore,
       });
 
       onClose();
       Swal.fire({
-        title: "Reminder set! 📅",
-        text: `A Google Calendar event has been created with a ${minutesBefore < 60 ? `${minutesBefore}-minute` : minutesBefore === 60 ? "1-hour" : "1-day"} reminder.`,
+        title: "Reminder added! 📅",
+        text: "Event created in your Google Calendar.",
         icon: "success",
         background: "#0e0c1e",
         color: "#e2e0ff",
         confirmButtonColor: "#6c63ff",
       });
-    } catch (err) {
-      const data = err?.response?.data;
-      if (data?.code === "CALENDAR_NO_ACCESS") {
-        onClose();
-        Swal.fire({
-          title: "Calendar access needed",
-          text: "Sign in with Google and grant Calendar permissions so MithrAI can create reminders for you.",
-          icon: "info",
-          background: "#0e0c1e",
-          color: "#e2e0ff",
-          confirmButtonColor: "#6c63ff",
-          confirmButtonText: "Got it",
-        });
-      } else {
-        Swal.fire({
-          title: "Couldn't create reminder",
-          text: data?.message || "Something went wrong. Please try again.",
-          icon: "error",
-          background: "#0e0c1e",
-          color: "#e2e0ff",
-          confirmButtonColor: "#6c63ff",
-        });
-      }
+    } catch {
+      // Fallback: Open Google Calendar in 1-click web link so it ALWAYS works
+      onClose();
+      openGoogleCalendarWebLink(title.trim(), description.trim(), isoDate);
+      Swal.fire({
+        title: "Opening Google Calendar 📅",
+        text: "Opening Google Calendar to save your reminder event.",
+        icon: "info",
+        background: "#0e0c1e",
+        color: "#e2e0ff",
+        confirmButtonColor: "#6c63ff",
+      });
     } finally {
       setLoading(false);
     }
@@ -128,9 +139,9 @@ export default function CalendarReminderModal({ isOpen, onClose, defaultTitle = 
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
                     <span style={{ fontSize: 22 }}>📅</span>
-                    <h2 style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>Set Calendar Reminder</h2>
+                    <h2 style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>Set Google Calendar Reminder</h2>
                   </div>
-                  <p style={{ fontSize: 13, color: "rgba(226,224,255,0.45)" }}>Creates an event in your Google Calendar.</p>
+                  <p style={{ fontSize: 13, color: "rgba(226,224,255,0.45)" }}>Schedules a reminder event directly in your Google Calendar.</p>
                 </div>
                 <button
                   onClick={onClose}
@@ -147,7 +158,7 @@ export default function CalendarReminderModal({ isOpen, onClose, defaultTitle = 
                   <label>Event Title</label>
                   <input
                     type="text"
-                    placeholder="e.g. AI Mock Interview — React"
+                    placeholder="e.g. Study Roadmap Phase 1"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
@@ -201,7 +212,7 @@ export default function CalendarReminderModal({ isOpen, onClose, defaultTitle = 
                     fontFamily: "inherit", fontSize: 14, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer",
                     transition: "all 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                   }}>
-                    {loading ? <><span style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} /> Creating…</> : "📅 Add to Calendar"}
+                    {loading ? <><span style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} /> Creating…</> : "📅 Add to Google Calendar"}
                   </button>
                 </div>
               </form>
